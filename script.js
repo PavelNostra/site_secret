@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const startBtn = document.getElementById('start-btn');
-    const finalCode = "123456";
+    const finalCode = "150899";
     const cursor = document.getElementById('custom-cursor');
     const overlay = document.getElementById('flashlight-overlay');
     const hSwitch = document.getElementById('hidden-switch');
