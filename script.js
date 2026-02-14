@@ -2,117 +2,125 @@ document.addEventListener('DOMContentLoaded', () => {
     const startBtn = document.getElementById('start-btn');
     const finalCode = "123456";
     const cursor = document.getElementById('custom-cursor');
+    const overlay = document.getElementById('flashlight-overlay');
+    const hSwitch = document.getElementById('hidden-switch');
+    const app = document.getElementById('app');
 
-    // --- CURSEUR ET TRAINÉE ---
-    const trailDots = [];
-    const maxDots = 15;
+    let isLightOn = false;
+    let currentStep = 0;
 
+    // --- CURSEUR ET LAMPE TORCHE ---
     document.addEventListener('mousemove', (e) => {
-        // Position du curseur principal
         cursor.style.left = `${e.clientX}px`;
         cursor.style.top = `${e.clientY}px`;
+        
+        if (!isLightOn) {
+            document.documentElement.style.setProperty('--cursor-x', `${e.clientX}px`);
+            document.documentElement.style.setProperty('--cursor-y', `${e.clientY}px`);
+            
+            // Vérifier si l'interrupteur est sous la lampe
+            const rect = hSwitch.getBoundingClientRect();
+            const switchCenterX = rect.left + rect.width / 2;
+            const switchCenterY = rect.top + rect.height / 2;
+            const dist = Math.hypot(e.clientX - switchCenterX, e.clientY - switchCenterY);
+            
+            if (dist < 150) {
+                hSwitch.classList.add('visible-under-torch');
+            } else {
+                hSwitch.classList.remove('visible-under-torch');
+            }
+        }
 
-        // Création de la traînée
+        // Traînée
         const dot = document.createElement('div');
         dot.className = 'cursor-trail';
         dot.style.left = `${e.clientX}px`;
         dot.style.top = `${e.clientY}px`;
         document.body.appendChild(dot);
-        
-        trailDots.push(dot);
-
-        // Animation de disparition du point
-        dot.animate([
-            { transform: 'translate(-50%, -50%) scale(1)', opacity: 0.6 },
-            { transform: 'translate(-50%, -50%) scale(0)', opacity: 0 }
-        ], {
-            duration: 800,
-            easing: 'ease-out'
-        }).onfinish = () => {
-            dot.remove();
-            trailDots.shift();
-        };
+        dot.animate([{ opacity: 0.6, scale: 1 }, { opacity: 0, scale: 0 }], { duration: 800 }).onfinish = () => dot.remove();
     });
 
-    // --- EFFET DE PARTICULES ---
-    function createParticle() {
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-        
-        const size = Math.random() * 4 + 2;
-        particle.style.width = `${size}px`;
-        particle.style.height = `${size}px`;
-        
-        const startX = Math.random() * window.innerWidth;
-        const startY = Math.random() * window.innerHeight;
-        particle.style.left = `${startX}px`;
-        particle.style.top = `${startY}px`;
-        
-        document.body.appendChild(particle);
-        
-        const destinationX = (Math.random() - 0.5) * 300;
-        const destinationY = (Math.random() - 0.5) * 300;
-        
-        const animation = particle.animate([
-            { transform: 'translate(0, 0)', opacity: 0 },
-            { transform: `translate(${destinationX/2}px, ${destinationY/2}px)`, opacity: 0.8, offset: 0.5 },
-            { transform: `translate(${destinationX}px, ${destinationY}px)`, opacity: 0 }
-        ], {
-            duration: Math.random() * 3000 + 2000,
-            easing: 'ease-out'
-        });
-        
-        animation.onfinish = () => particle.remove();
+    // --- LOGIQUE UNIQUE DE L'INTERRUPTEUR (Étape 0 seulement) ---
+    function placeInitialSwitch() {
+        const x = Math.random() * (window.innerWidth - 120) + 60;
+        const y = Math.random() * (window.innerHeight - 120) + 60;
+        hSwitch.style.left = `${x}px`;
+        hSwitch.style.top = `${y}px`;
+        hSwitch.style.display = 'block';
     }
 
-    // Générer des particules de temps en temps
-    setInterval(() => {
-        if (Math.random() > 0.7) createParticle();
-    }, 500);
+    hSwitch.addEventListener('click', () => {
+        isLightOn = true;
+        hSwitch.style.display = 'none';
+        overlay.style.opacity = '0';
+        setTimeout(() => overlay.style.display = 'none', 1000);
+        
+        // Flash blanc
+        const flash = document.createElement('div');
+        flash.style.position = 'fixed';
+        flash.style.inset = '0';
+        flash.style.zIndex = '6000';
+        flash.className = 'light-flash';
+        document.body.appendChild(flash);
+        setTimeout(() => flash.remove(), 800);
+        
+        // Rendre visible le contenu de la landing
+        document.getElementById('step-0').style.visibility = 'visible';
+    });
 
-    // --- BOUTON INITIAL ---
-    startBtn.style.opacity = "0"; // Force l'invisibilité au départ
-    startBtn.addEventListener('mouseenter', () => startBtn.style.opacity = "1");
-    startBtn.addEventListener('mouseleave', () => startBtn.style.opacity = "0");
+    // --- GESTION DES ÉTAPES ---
+    window.goToStep = function(num) {
+        currentStep = num;
+        const steps = document.querySelectorAll('.step');
+        
+        // Transition de fondu entre les questions
+        app.style.opacity = '0';
+        
+        setTimeout(() => {
+            steps.forEach(s => {
+                s.classList.remove('active');
+                s.style.visibility = 'hidden';
+            });
+            
+            const target = document.getElementById(`step-${num}`);
+            target.classList.add('active');
+            target.style.visibility = 'visible';
+            
+            app.style.opacity = '1';
+        }, 400);
+    };
 
-    startBtn.addEventListener('click', () => {
+    // --- BOUTON COMMENCER ---
+    startBtn.addEventListener('click', (e) => {
+        e.preventDefault();
         goToStep(1);
     });
+
+    // Initialisation
+    overlay.style.display = 'block';
+    placeInitialSwitch();
 
     // --- LOGIQUE DU QUESTIONNAIRE ---
     window.validateQuestion = function(num) {
         if (num === 1) {
             const input = document.querySelector(`#q1 input`);
-            const answer = input.getAttribute('data-answer').toLowerCase();
-            if (input.value.toLowerCase().trim() === answer.toLowerCase()) {
+            if (input.value.toLowerCase().trim() === "saint-laurent-du-var") {
                 showNext(1, 2);
-            } else {
-                errorFeedback(input);
-            }
+            } else { errorFeedback(input); }
         } 
         else if (num === 4) {
             const checkboxes = document.querySelectorAll('#q4 input[type="checkbox"]');
-            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-            if (allChecked) {
+            if (Array.from(checkboxes).every(cb => cb.checked)) {
                 document.getElementById('q4').classList.add('hidden');
                 document.getElementById('reward-1').classList.remove('hidden');
-            } else {
-                errorFeedback(document.getElementById('q4'));
-            }
+            } else { errorFeedback(document.getElementById('q4')); }
         }
     };
 
     window.selectOption = function(qNum, value) {
-        const correctAnswers = {
-            2: "Visage",
-            3: "10/10"
-        };
-
-        if (value === correctAnswers[qNum]) {
-            showNext(qNum, qNum + 1);
-        } else {
-            errorFeedback(document.getElementById(`q${qNum}`));
-        }
+        const correct = { 2: "Visage", 3: "10/10" };
+        if (value === correct[qNum]) { showNext(qNum, qNum + 1); }
+        else { errorFeedback(document.getElementById(`q${qNum}`)); }
     };
 
     function showNext(current, next) {
@@ -125,57 +133,30 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => el.classList.remove('shake'), 400);
     }
 
-    // --- ÉTAPE 2: Énigme 1 ---
-    const riddle1Input = document.getElementById('riddle-1-input');
-    const riddle1Btn = document.getElementById('riddle-1-btn');
-
-    riddle1Btn.addEventListener('click', () => {
-        if (riddle1Input.value.toLowerCase().trim() === "secret") {
+    // --- ÉTAPES ÉNIGMES ---
+    document.getElementById('riddle-1-btn').addEventListener('click', () => {
+        if (document.getElementById('riddle-1-input').value.toLowerCase().trim() === "secret") {
             document.getElementById('reward-2').classList.remove('hidden');
-            riddle1Input.style.display = "none";
-            riddle1Btn.style.display = "none";
-        } else {
-            errorFeedback(riddle1Input);
-        }
+            document.getElementById('riddle-1-input').style.display = "none";
+            document.getElementById('riddle-1-btn').style.display = "none";
+        } else { errorFeedback(document.getElementById('riddle-1-input')); }
     });
 
-    // --- ÉTAPE 3: Énigme 2 ---
-    const riddle2Input = document.getElementById('riddle-2-input');
-    const riddle2Btn = document.getElementById('riddle-2-btn');
-
-    riddle2Btn.addEventListener('click', () => {
-        const ans = riddle2Input.value.toLowerCase().trim();
+    document.getElementById('riddle-2-btn').addEventListener('click', () => {
+        const ans = document.getElementById('riddle-2-input').value.toLowerCase().trim();
         if (ans === "enveloppe" || ans === "une enveloppe") {
             document.getElementById('reward-3').classList.remove('hidden');
-            riddle2Input.style.display = "none";
-            riddle2Btn.style.display = "none";
-        } else {
-            errorFeedback(riddle2Input);
-        }
+            document.getElementById('riddle-2-input').style.display = "none";
+            document.getElementById('riddle-2-btn').style.display = "none";
+        } else { errorFeedback(document.getElementById('riddle-2-input')); }
     });
 
-    // --- ÉTAPE 4: Code Final ---
-    const finalInput = document.getElementById('final-code-input');
-    const unlockBtn = document.getElementById('unlock-btn');
-
-    unlockBtn.addEventListener('click', () => {
-        if (finalInput.value.trim() === finalCode) {
+    document.getElementById('unlock-btn').addEventListener('click', () => {
+        if (document.getElementById('final-code-input').value.trim() === finalCode) {
             document.getElementById('final-result').classList.remove('hidden');
-            finalInput.style.display = "none";
-            unlockBtn.style.display = "none";
+            document.getElementById('final-code-input').style.display = "none";
+            document.getElementById('unlock-btn').style.display = "none";
             document.querySelector('#step-4 h2').innerText = "Accès Autorisé";
-        } else {
-            errorFeedback(finalInput);
-        }
+        } else { errorFeedback(document.getElementById('final-code-input')); }
     });
 });
-
-function goToStep(num) {
-    const steps = document.querySelectorAll('.step');
-    steps.forEach(s => s.classList.remove('active'));
-    
-    setTimeout(() => {
-        const target = document.getElementById(`step-${num}`);
-        target.classList.add('active');
-    }, 100);
-}
