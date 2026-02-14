@@ -68,15 +68,21 @@
             </div>
         </section>
 
-        <!-- ÉTAPE 2: Énigme Visuelle -->
+        <!-- ÉTAPE 2: Mini-jeu Neon Reflex -->
         <section id="step-2" class="step">
-            <h2>L'Énigme du Secret</h2>
-            <p class="riddle-text">"Plus j'ai de gardiens, moins je suis gardé. Moins j'ai de gardiens, plus je suis gardé. Que suis-je ?"</p>
-            <input type="text" id="riddle-1-input" placeholder="Ton secret...">
-            <button id="riddle-1-btn" class="action-btn">Vérifier</button>
+            <h2>Chasse aux Papillons</h2>
+            <div id="game-ui">
+                <p>Score: <span id="game-score">0</span>/10</p>
+                <p>Temps: <span id="game-timer">20</span>s</p>
+            </div>
+            <div id="reflex-game-container">
+                <!-- Les cibles apparaîtront ici -->
+            </div>
+            <button id="start-game-btn" class="action-btn">Lancer le défi</button>
             
             <div id="reward-2" class="reward-box hidden">
-                <p>Deuxième fragment du code : <span class="code-fragment">34</span></p>
+                <p>Défi réussi !</p>
+                <p>Deuxième fragment : <span class="code-fragment">34</span></p>
                 <button onclick="goToStep(3)" class="action-btn">Continuer</button>
             </div>
         </section>
