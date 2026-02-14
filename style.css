@@ -20,6 +20,17 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    box-shadow: inset 0 0 100px rgba(191, 0, 255, 0.2);
+}
+
+.particle {
+    position: absolute;
+    background: var(--accent-color);
+    border-radius: 50%;
+    pointer-events: none;
+    box-shadow: 0 0 10px var(--accent-color), 0 0 20px var(--accent-color);
+    z-index: -1;
+    filter: blur(1px);
 }
 
 #app {

@@ -2,6 +2,47 @@ document.addEventListener('DOMContentLoaded', () => {
     const startBtn = document.getElementById('start-btn');
     const finalCode = "123456";
 
+    // --- EFFET DE PARTICULES ---
+    function createParticle() {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        
+        const size = Math.random() * 4 + 2;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        
+        const startX = Math.random() * window.innerWidth;
+        const startY = Math.random() * window.innerHeight;
+        particle.style.left = `${startX}px`;
+        particle.style.top = `${startY}px`;
+        
+        document.body.appendChild(particle);
+        
+        const destinationX = (Math.random() - 0.5) * 300;
+        const destinationY = (Math.random() - 0.5) * 300;
+        
+        const animation = particle.animate([
+            { transform: 'translate(0, 0)', opacity: 0 },
+            { transform: `translate(${destinationX/2}px, ${destinationY/2}px)`, opacity: 0.8, offset: 0.5 },
+            { transform: `translate(${destinationX}px, ${destinationY}px)`, opacity: 0 }
+        ], {
+            duration: Math.random() * 3000 + 2000,
+            easing: 'ease-out'
+        });
+        
+        animation.onfinish = () => particle.remove();
+    }
+
+    // Générer des particules de temps en temps
+    setInterval(() => {
+        if (Math.random() > 0.7) createParticle();
+    }, 500);
+
+    // --- BOUTON INITIAL ---
+    startBtn.style.opacity = "0"; // Force l'invisibilité au départ
+    startBtn.addEventListener('mouseenter', () => startBtn.style.opacity = "1");
+    startBtn.addEventListener('mouseleave', () => startBtn.style.opacity = "0");
+
     startBtn.addEventListener('click', () => {
         goToStep(1);
     });
