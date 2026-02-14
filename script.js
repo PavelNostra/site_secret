@@ -1,6 +1,38 @@
 document.addEventListener('DOMContentLoaded', () => {
     const startBtn = document.getElementById('start-btn');
     const finalCode = "123456";
+    const cursor = document.getElementById('custom-cursor');
+
+    // --- CURSEUR ET TRAINÉE ---
+    const trailDots = [];
+    const maxDots = 15;
+
+    document.addEventListener('mousemove', (e) => {
+        // Position du curseur principal
+        cursor.style.left = `${e.clientX}px`;
+        cursor.style.top = `${e.clientY}px`;
+
+        // Création de la traînée
+        const dot = document.createElement('div');
+        dot.className = 'cursor-trail';
+        dot.style.left = `${e.clientX}px`;
+        dot.style.top = `${e.clientY}px`;
+        document.body.appendChild(dot);
+        
+        trailDots.push(dot);
+
+        // Animation de disparition du point
+        dot.animate([
+            { transform: 'translate(-50%, -50%) scale(1)', opacity: 0.6 },
+            { transform: 'translate(-50%, -50%) scale(0)', opacity: 0 }
+        ], {
+            duration: 800,
+            easing: 'ease-out'
+        }).onfinish = () => {
+            dot.remove();
+            trailDots.shift();
+        };
+    });
 
     // --- EFFET DE PARTICULES ---
     function createParticle() {
