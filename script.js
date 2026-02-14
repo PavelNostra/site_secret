@@ -229,14 +229,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- ÉTAPE 3: ÉNIGME ---
+    // --- ÉTAPE 3: ÉPREUVE RÉELLE ---
     document.getElementById('riddle-2-btn').addEventListener('click', () => {
-        const ans = document.getElementById('riddle-2-input').value.toLowerCase().trim();
-        if (ans === "enveloppe" || ans === "une enveloppe") {
-            document.getElementById('reward-3').classList.remove('hidden');
-            document.getElementById('riddle-2-input').style.display = "none";
-            document.getElementById('riddle-2-btn').style.display = "none";
-        } else errorFeedback(document.getElementById('riddle-2-input'));
+        document.getElementById('riddle-2-btn').style.display = "none";
+        document.getElementById('reward-3').classList.remove('hidden');
     });
 
     // --- ÉTAPE 4: VERROU ---
