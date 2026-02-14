@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chasse au Trésor - Mystère</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- ÉTAPE 0: Landing -->
+        <section id="step-0" class="step active">
+            <button id="start-btn" class="glow-btn">Commencer</button>
+        </section>
+
+        <!-- ÉTAPE 1: Questionnaire -->
+        <section id="step-1" class="step">
+            <h2>Questionnaire de complicité</h2>
+            <div id="quiz-container">
+                <!-- Q1: Texte -->
+                <div class="question-block" id="q1">
+                    <p>Où a eu lieu notre premier baiser ?</p>
+                    <input type="text" placeholder="Lieu exact..." data-answer="Saint-Laurent-du-Var">
+                    <button class="validate-q-btn" onclick="validateQuestion(1)">Valider</button>
+                </div>
+
+                <!-- Q2: Choix unique -->
+                <div class="question-block hidden" id="q2">
+                    <p>Qu'est-ce que je préfère chez toi ?</p>
+                    <div class="options-grid">
+                        <button class="opt-btn" onclick="selectOption(2, 'Visage')">Visage</button>
+                        <button class="opt-btn" onclick="selectOption(2, 'Top2')">Top2</button>
+                        <button class="opt-btn" onclick="selectOption(2, 'Top3')">Top3</button>
+                        <button class="opt-btn" onclick="selectOption(2, 'Main')">Main</button>
+                    </div>
+                </div>
+
+                <!-- Q3: Choix unique -->
+                <div class="question-block hidden" id="q3">
+                    <p>D'après ton amoureux es-tu une 10/10 ou une 4/10 ?</p>
+                    <div class="options-grid">
+                        <button class="opt-btn" onclick="selectOption(3, '10/10')">10/10</button>
+                        <button class="opt-btn" onclick="selectOption(3, '4/10')">4/10</button>
+                    </div>
+                </div>
+
+                <!-- Q4: Multi-choix -->
+                <div class="question-block hidden" id="q4">
+                    <p>Qu'est-ce que ton amoureux veut le plus au monde ?<br><small>(Coche tout ce qui est vrai)</small></p>
+                    <div class="checkbox-list">
+                        <label class="check-item"><input type="checkbox" value="1"> M'épouser</label>
+                        <label class="check-item"><input type="checkbox" value="2"> Être mon protecteur</label>
+                        <label class="check-item"><input type="checkbox" value="3"> M'apporter joie, réconfort, amour et bonheur</label>
+                        <label class="check-item"><input type="checkbox" value="4"> Vieillir avec moi et me suivre dans ce qu'il y a après</label>
+                    </div>
+                    <button class="validate-q-btn" onclick="validateQuestion(4)">Valider mon choix</button>
+                </div>
+            </div>
+            <div id="reward-1" class="reward-box hidden">
+                <p>Premier fragment du code : <span class="code-fragment">12</span></p>
+                <button onclick="goToStep(2)" class="action-btn">Continuer</button>
+            </div>
+        </section>
+
+        <!-- ÉTAPE 2: Énigme Visuelle -->
+        <section id="step-2" class="step">
+            <h2>L'Énigme du Secret</h2>
+            <p class="riddle-text">"Plus j'ai de gardiens, moins je suis gardé. Moins j'ai de gardiens, plus je suis gardé. Que suis-je ?"</p>
+            <input type="text" id="riddle-1-input" placeholder="Ton secret...">
+            <button id="riddle-1-btn" class="action-btn">Vérifier</button>
+            
+            <div id="reward-2" class="reward-box hidden">
+                <p>Deuxième fragment du code : <span class="code-fragment">34</span></p>
+                <button onclick="goToStep(3)" class="action-btn">Continuer</button>
+            </div>
+        </section>
+
+        <!-- ÉTAPE 3: Énigme Finale -->
+        <section id="step-3" class="step">
+            <h2>L'Énigme de l'Objet</h2>
+            <p class="riddle-text">"Je commence par un 'e', je finis par un 'e', et je ne contient qu'une seule lettre. Que suis-je ?"</p>
+            <input type="text" id="riddle-2-input" placeholder="L'objet...">
+            <button id="riddle-2-btn" class="action-btn">Vérifier</button>
+
+            <div id="reward-3" class="reward-box hidden">
+                <p>Dernier fragment du code : <span class="code-fragment">56</span></p>
+                <button onclick="goToStep(4)" class="action-btn">Le Verrou Final</button>
+            </div>
+        </section>
+
+        <!-- ÉTAPE FINALE: Le Verrou -->
+        <section id="step-4" class="step">
+            <h2>Le Verrou Final</h2>
+            <div class="keypad-container">
+                <input type="text" id="final-code-input" maxlength="6" placeholder="******">
+                <button id="unlock-btn" class="action-btn">Déverrouiller</button>
+            </div>
+            <div id="final-result" class="hidden">
+                <a href="https://example.com" class="gold-btn">Récupérer le trésor</a>
+            </div>
+        </section>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
